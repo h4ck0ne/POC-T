@@ -166,3 +166,7 @@ def output2file(msg):
     f.write(msg + '\n')
     f.close()
     if th.thread_mode: th.file_lock.release()
+
+
+def increaseredis():
+    pass
