@@ -21,7 +21,7 @@ def run(domain,port):
 		url = url + suffix
 		try:
 			headers = {"Origin":url}
-			r = requests.get(url,headers = headers)
+			r = requests.head(url,headers = headers)
 			if "Access-Control-Allow-Origin" in r.headers.keys() and "Access-Control-Allow-Credentials" in r.headers.keys():
 				return True
 		except requests.RequestException:
